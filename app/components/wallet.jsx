@@ -588,7 +588,7 @@ class ZSendKMD extends React.Component {
       errString += '`From Address` field can\'t be empty.;'
     }
 
-    if (recipientAddress.length !== 35) {
+    if (recipientAddress.length !== 34) {
       errString += 'Invalid address. Only transparent addresses are supported at this point in time.;'
     }
 
