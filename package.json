@@ -27,7 +27,7 @@
     "fs": "^0.0.1-security",
     "hash.js": "^1.1.3",
     "html-webpack-plugin": "^2.30.1",
-    "komodojs": "git://github.com/OleksandrBlack/safecoinjs#master",
+    "safecoinjs": "git://github.com/OleksandrBlack/safecoinjs#master",
     "path": "^0.12.7",
     "qrcode.react": "^0.7.1",
     "react": "^15.6.1",
