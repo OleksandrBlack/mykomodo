@@ -6,8 +6,8 @@ import QRCode from 'qrcode.react';
 import classnames from 'classnames'
 import CopyToClipboard from 'react-copy-to-clipboard'
 import ReactTable from 'react-table'
-import komodojs from 'komodojs'
-import komodowalletutils from '../lib/utils'
+import safecoinjs from 'safecoinjs'
+import safecoinwalletutils from '../lib/utils'
 import hdwallet from '../lib/hdwallet'
 import FileSaver from 'file-saver'
 
@@ -22,7 +22,7 @@ import FAEye from 'react-icons/lib/fa/eye'
 import pjson from '../../package.json'
 
 // Throttled GET request to prevent unusable lag
-const throttledAxiosGet = komodowalletutils.promiseDebounce(axios.get, 1000, 5)
+const throttledAxiosGet = safecoinwalletutils.promiseDebounce(axios.get, 1000, 5)
 
 // Unlock wallet enum
 var UNLOCK_WALLET_TYPE = {
@@ -75,10 +75,10 @@ class ZWalletGenerator extends React.Component {
 
   handlePasswordPhrase(e){
     // What wif format do we use?
-    var wifHash = this.props.settings.useTestNet ? komodojs.config.testnet.wif : komodojs.config.mainnet.wif
+    var wifHash = this.props.settings.useTestNet ? safecoinjs.config.testnet.wif : safecoinjs.config.mainnet.wif
 
-    var pk = komodojs.address.mkPrivKey(e.target.value)
-    var pkwif = komodojs.address.privKeyToWIF(pk, true, wifHash)
+    var pk = safecoinjs.address.mkPrivKey(e.target.value)
+    var pkwif = safecoinjs.address.privKeyToWIF(pk, true, wifHash)
 
     if (e.target.value === ''){
       pkwif = ''
@@ -222,8 +222,8 @@ class ZWalletUnlockKey extends React.Component {
                 />
               </Label>
               <FormText color="muted">
-                <span className="import4">For Windows, it should be in</span> %APPDATA%/komodo<br/>
-                <span className="import5">For Mac/Linux, it should be in</span> ~/.komodo
+                <span className="import4">For Windows, it should be in</span> %APPDATA%/safecoin<br/>
+                <span className="import5">For Mac/Linux, it should be in</span> ~/.safecoin
               </FormText>
             </Col>
           </FormGroup>
@@ -284,7 +284,7 @@ class ZWalletSettings extends React.Component {
   render () {
     return (
       <Modal isOpen={this.props.settings.showSettings} toggle={this.props.toggleModalSettings}>
-        <ModalHeader toggle={this.props.toggleShowSettings}><span className="settings1">komodo Wallet Settings</span></ModalHeader>                  
+        <ModalHeader toggle={this.props.toggleShowSettings}><span className="settings1">Safecoin Wallet Settings</span></ModalHeader>                  
         <ModalBody>
           <ZWalletSelectUnlockType
               setUnlockType={this.props.setUnlockType}
@@ -362,14 +362,14 @@ class ZAddressInfo extends React.Component {
 
   // Gets the blockchain explorer URL for an address
   getAddressBlockExplorerURL(address) {
-    return komodowalletutils.urlAppend(this.props.settings.explorerURL, 'address/') + address
+    return safecoinwalletutils.urlAppend(this.props.settings.explorerURL, 'address/') + address
   }
 
   // Updates a address info
   updateAddressInfo(address) {
     // GET request to URL
-    var info_url = komodowalletutils.urlAppend(this.props.settings.insightAPI, 'addr/')
-    info_url = komodowalletutils.urlAppend(info_url, address + '?noTxList=1')    
+    var info_url = safecoinwalletutils.urlAppend(this.props.settings.insightAPI, 'addr/')
+    info_url = safecoinwalletutils.urlAppend(info_url, address + '?noTxList=1')    
         
     throttledAxiosGet(info_url)
     .then(function (response){
@@ -498,7 +498,7 @@ class ZAddressInfo extends React.Component {
   }
 }
 
-class ZSendKMD extends React.Component {
+class ZSendSAFE extends React.Component {
   constructor(props) {
     super(props)    
     
@@ -509,7 +509,7 @@ class ZSendKMD extends React.Component {
     this.handleUpdateAmount = this.handleUpdateAmount.bind(this);
     this.handleCheckChanged = this.handleCheckChanged.bind(this);
     this.handleUpdateFee = this.handleUpdateFee.bind(this);
-    this.handleSendKMD = this.handleSendKMD.bind(this);    
+    this.handleSendSAFE = this.handleSendSAFE.bind(this);    
 
     this.state = {
       selectedAddress: '', // which address did we select
@@ -565,7 +565,7 @@ class ZSendKMD extends React.Component {
     })
   }
 
-  handleSendKMD(){      
+  handleSendSAFE(){      
     const value = this.state.amount;
     const fee = this.state.fee;
     const recipientAddress = this.state.recipientAddress;
@@ -576,7 +576,7 @@ class ZSendKMD extends React.Component {
     const satoshisToSend = Math.round(value * 100000000)
     const satoshisfeesToSend = Math.round(fee * 100000000)        
     
-    // Reset komodo send progress and error message
+    // Reset safecoin send progress and error message
     this.setProgressValue(1)
     this.setSendErrorMessage('')
 
@@ -615,9 +615,9 @@ class ZSendKMD extends React.Component {
     const senderPrivateKey = this.props.publicAddresses[senderAddress].privateKey;
 
     // Get previous transactions
-    const prevTxURL = komodowalletutils.urlAppend(this.props.settings.insightAPI, 'addr/') + senderAddress + '/utxo'
-    const infoURL = komodowalletutils.urlAppend(this.props.settings.insightAPI, 'status?q=getInfo')
-    const sendRawTxURL = komodowalletutils.urlAppend(this.props.settings.insightAPI, 'tx/send')
+    const prevTxURL = safecoinwalletutils.urlAppend(this.props.settings.insightAPI, 'addr/') + senderAddress + '/utxo'
+    const infoURL = safecoinwalletutils.urlAppend(this.props.settings.insightAPI, 'status?q=getInfo')
+    const sendRawTxURL = safecoinwalletutils.urlAppend(this.props.settings.insightAPI, 'tx/send')
 
     // Building our transaction TXOBJ
     // How many satoshis do we have so far
@@ -661,7 +661,7 @@ class ZSendKMD extends React.Component {
           // If we don't have enough address
           // fail and tell user
           if (satoshisSoFar < satoshisToSend + satoshisfeesToSend){            
-            this.setSendErrorMessage('Not enough confirmed KMD in account to perform transaction')
+            this.setSendErrorMessage('Not enough confirmed SAFE in account to perform transaction')
             this.setProgressValue(0)          
           }
 
@@ -673,15 +673,15 @@ class ZSendKMD extends React.Component {
           }
 
           // Create transaction
-          var txObj = komodojs.transaction.createRawTx(history, recipients)
+          var txObj = safecoinjs.transaction.createRawTx(history, recipients)
 
           // Sign each history transcation          
           for (var i = 0; i < history.length; i ++){
-            txObj = komodojs.transaction.signTx(txObj, i, senderPrivateKey, this.props.settings.compressPubKey)
+            txObj = safecoinjs.transaction.signTx(txObj, i, senderPrivateKey, this.props.settings.compressPubKey)
           }
 
           // Convert it to hex string
-          const txHexString = komodojs.transaction.serializeTx(txObj)
+          const txHexString = safecoinjs.transaction.serializeTx(txObj)
 
           axios.post(sendRawTxURL, {rawtx: txHexString})
           .then(function(sendtx_resp){         
@@ -706,19 +706,19 @@ class ZSendKMD extends React.Component {
 
   render() {
     // If send was successful
-    var komodoTxLink
+    var safecoinTxLink
     if (this.state.sendProgress === 100){
-      var komodotx = komodowalletutils.urlAppend(this.props.settings.explorerURL, 'tx/') + this.state.sentTxid
-      komodoTxLink = (
+      var safecointx = safecoinwalletutils.urlAppend(this.props.settings.explorerURL, 'tx/') + this.state.sentTxid
+      safecoinTxLink = (
         <Alert color="success">
-        <strong><span className="send1">KMD successfully sent!</span></strong> <a href={komodotx}><span className="send2">Click here to view your transaction</span></a>
+        <strong><span className="send1">SAFE successfully sent!</span></strong> <a href={safecointx}><span className="send2">Click here to view your transaction</span></a>
         </Alert>
       )      
     }
 
     // Else show error why
     else if (this.state.sendErrorMessage !== ''){
-      komodoTxLink = (
+      safecoinTxLink = (
         this.state.sendErrorMessage.split(';').map(function (s) {
           if (s !== ''){
             return (
@@ -747,7 +747,7 @@ class ZSendKMD extends React.Component {
         <Col>
           <Card>
             <CardBlock>       
-              <Alert color="danger"><span className="send3">ALWAYS VALIDATE YOUR DESINATION ADDRESS BY SENDING SMALL AMOUNTS OF KMD FIRST</span></Alert>              
+              <Alert color="danger"><span className="send3">ALWAYS VALIDATE YOUR DESINATION ADDRESS BY SENDING SMALL AMOUNTS OF SAFE FIRST</span></Alert>              
               <InputGroup>
                 <InputGroupAddon><span className="send4">From Address</span></InputGroupAddon>
                 <Input type="select" onChange={this.handleUpdateSelectedAddress}>
@@ -771,18 +771,18 @@ class ZSendKMD extends React.Component {
               <FormGroup check>
                 <Label check>
                   <Input onChange={this.handleCheckChanged} type="checkbox" />{' '}
-                  <span className="send8">Yes, I would like to send these KMD</span>
+                  <span className="send8">Yes, I would like to send these SAFE</span>
                 </Label>
               </FormGroup> 
               <br/>                           
               <Button 
                 color="warning" className="btn-block"
                 disabled={!this.state.confirmSend || (this.state.sendProgress > 0 && this.state.sendProgress < 100)}
-                onClick={this.handleSendKMD}
+                onClick={this.handleSendSAFE}
               ><span className="send9">Send</span></Button>
             </CardBlock>
             <CardFooter> 
-              {komodoTxLink}
+              {safecoinTxLink}
               <Progress value={this.state.sendProgress} />                                  
             </CardFooter>       
           </Card>
@@ -909,7 +909,7 @@ class ZWalletTabs extends React.Component {
     var now = new Date();
     now = now.toISOString().split('.')[0]+'Z';
 
-    var fileStr = '# Wallet dump created by mykomodo ' + pjson.version + '\n'
+    var fileStr = '# Wallet dump created by mysafecoin ' + pjson.version + '\n'
     fileStr += '# Created on ' + now + '\n\n\n'
 
     Object.keys(this.props.publicAddresses).forEach(function(key) {
@@ -919,7 +919,7 @@ class ZWalletTabs extends React.Component {
     }.bind(this))
     
     const pkBlob = new Blob([fileStr], {type: 'text/plain;charset=utf-8'})
-    FileSaver.saveAs(pkBlob, now + '_mykomodo_private_keys.txt')
+    FileSaver.saveAs(pkBlob, now + '_mysafecoin_private_keys.txt')
   }
 
   render () {
@@ -939,7 +939,7 @@ class ZWalletTabs extends React.Component {
               className={classnames({ active: this.state.activeTab === '2' })}
               onClick={() => { this.toggleTabs('2'); }}
             >
-              <span className="menu2">Send KMD</span>
+              <span className="menu2">Send SAFE</span>
             </NavLink>
           </NavItem>
           <NavItem>
@@ -960,7 +960,7 @@ class ZWalletTabs extends React.Component {
             />
           </TabPane>
           <TabPane tabId="2">
-            <ZSendKMD 
+            <ZSendSAFE 
               settings={this.props.settings}
               publicAddresses={this.props.publicAddresses}            
             />
@@ -1011,8 +1011,8 @@ export default class ZWallet extends React.Component {
         showSettings: false,
         showWalletGen: false,
         compressPubKey: true,
-        insightAPI: 'https://kmd.explorer.supernet.org/api',
-        explorerURL: 'https://kmd.explorer.supernet.org/',
+        insightAPI: 'https://explorer.safecoin.org/api',
+        explorerURL: 'https://explorer.safecoin.org/',
         useTestNet: false,
         unlockType: UNLOCK_WALLET_TYPE.HD_WALLET
       }
@@ -1030,21 +1030,21 @@ export default class ZWallet extends React.Component {
       function _privKeyToAddr(pk, compressPubKey, useTestNet){
         // If not 64 length, probs WIF format
         if (pk.length !== 64){
-          pk = komodojs.address.WIFToPrivKey(pk)          
+          pk = safecoinjs.address.WIFToPrivKey(pk)          
         }
 
         // Convert public key to public address
-        const pubKey = komodojs.address.privKeyToPubKey(pk, compressPubKey)
+        const pubKey = safecoinjs.address.privKeyToPubKey(pk, compressPubKey)
 
         // Testnet or nah
-        const pubKeyHash = useTestNet ? komodojs.config.testnet.pubKeyHash : komodojs.config.mainnet.pubKeyHash
-        const publicAddr = komodojs.address.pubKeyToAddr(pubKey, pubKeyHash)
+        const pubKeyHash = useTestNet ? safecoinjs.config.testnet.pubKeyHash : safecoinjs.config.mainnet.pubKeyHash
+        const publicAddr = safecoinjs.address.pubKeyToAddr(pubKey, pubKeyHash)
 
         return publicAddr
       }
 
       for (var i = 0; i < this.state.privateKeys.length; i++){
-        const pubKeyHash = this.state.settings.useTestNet ? komodojs.config.testnet.wif : komodojs.config.mainnet.wif
+        const pubKeyHash = this.state.settings.useTestNet ? safecoinjs.config.testnet.wif : safecoinjs.config.mainnet.wif
         
         var c_pk_wif;
         var c_pk = this.state.privateKeys[i]
@@ -1052,13 +1052,13 @@ export default class ZWallet extends React.Component {
         // If not 64 length, probs WIF format
         if (c_pk.length !== 64){
           c_pk_wif = c_pk
-          c_pk = komodojs.address.WIFToPrivKey(c_pk)
+          c_pk = safecoinjs.address.WIFToPrivKey(c_pk)
         }
         else{
-          c_pk_wif = komodojs.address.privKeyToWIF(c_pk)
+          c_pk_wif = safecoinjs.address.privKeyToWIF(c_pk)
         }          
 
-        var c_pk_wif = komodojs.address.privKeyToWIF(c_pk, true, pubKeyHash)        
+        var c_pk_wif = safecoinjs.address.privKeyToWIF(c_pk, true, pubKeyHash)        
         const c_addr = _privKeyToAddr(c_pk, this.state.settings.compressPubKey, this.state.settings.useTestNet)        
 
         publicAddresses[c_addr] = {
@@ -1145,12 +1145,12 @@ export default class ZWallet extends React.Component {
     _settings.useTestNet = !_settings.useTestNet
 
     if (_settings.useTestNet){
-        _settings.insightAPI = 'https://testnet.zel.cash/api'
-      _settings.explorerURL = 'https://testnet.zel.cash/'
+        _settings.insightAPI = 'https://testnet.safecoin.org/api'
+      _settings.explorerURL = 'https://testnet.safecoin.org/'
     }
     else{
-        _settings.insightAPI = 'https://kmd.explorer.supernet.org/api'
-        _settings.explorerURL = 'https://kmd.explorer.supernet.org/'
+        _settings.insightAPI = 'https://explorer.safecoin.org/api'
+        _settings.explorerURL = 'https://explorer.safecoin.org/'
     }
 
     this.setState({
@@ -1181,7 +1181,7 @@ export default class ZWallet extends React.Component {
       <Container>
         <Row>
           <Col>
-            <h1 className='display-6'><span className="main1">MyKomodo Wallet</span>&nbsp;
+            <h1 className='display-6'><span className="main1">MySafecoin Wallet</span>&nbsp;
               <ToolTipButton onClick={this.toggleShowSettings} id={1} buttonText={<MDSettings/>} tooltipText={'settings'}/>&nbsp;
               <ToolTipButton disabled={this.state.publicAddresses === null} onClick={this.resetKeys} id={2} buttonText={<FARepeat/>} tooltipText={'reset wallet'}/>
             </h1>
