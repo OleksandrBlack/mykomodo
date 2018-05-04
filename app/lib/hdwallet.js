@@ -1,6 +1,6 @@
 var bitcoinjs = require('bitcoinjs-lib');
 var bip32utils = require('bip32-utils');
-var komodojs = require('komodojs');
+var safecoinjs = require('safecoinjs');
 var bs58check = require('bs58check');
 
 // Hierarchical Deterministic wallet
