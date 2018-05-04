@@ -1,9 +1,9 @@
 {
   "name": "mykomodo",
   "version": "v2.1.0",
-  "description": "Secure Komodo wallet online",
+  "description": "Secure Safecoin wallet online",
   "main": "index.js",
-  "repository": "https://github.com/TheTrunk/mykomodo.git",
+  "repository": "https://github.com/OleksandrBlack/mysafecoin.git",
   "author": "TheTrunk",
   "license": "MIT",
   "scripts": {
@@ -27,7 +27,7 @@
     "fs": "^0.0.1-security",
     "hash.js": "^1.1.3",
     "html-webpack-plugin": "^2.30.1",
-    "komodojs": "git://github.com/TheTrunk/komodojs#master",
+    "komodojs": "git://github.com/OleksandrBlack/safecoinjs#master",
     "path": "^0.12.7",
     "qrcode.react": "^0.7.1",
     "react": "^15.6.1",
