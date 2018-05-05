@@ -2313,9 +2313,9 @@ https-browserify@0.0.1:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/https-browserify/-/https-browserify-0.0.1.tgz#3f91365cabe60b77ed0ebba24b454e3e09d95a82"
 
-"hushjs@git://github.com/TheTrunk/hushjs#master":
+"safecoinjs@git://github.com/OleksandrBlack/safecoinjs#master":
   version "1.0.0"
-  resolved "git://github.com/TheTrunk/hushjs#1a291cdd6e37e084a5af1f8b58616e5071f6ba4f"
+  resolved "git://github.com/OleksandrBlack/safecoinjs#1a291cdd6e37e084a5af1f8b58616e5071f6ba4f"
   dependencies:
     bigi "^1.4.2"
     bs58 "^4.0.1"
