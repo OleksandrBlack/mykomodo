@@ -24,7 +24,7 @@ export default class ZFaq extends React.Component {
 
             <p>
               <b><span className="faq4a">Q: Why are you doing this?</span></b><br/>
-              <span className="faq4b">A: MySafecoin Wallet was inspired by</span> <a href="https://my.zel.cash/"><span className="faq4c">MyZelWallet's</span></a> <span className="faq4d">which was inspired by</span> <a href="https://myzenwallet.io/"><span className="faq4e">MyZenWallet's.</span></a> <span className="faq4f">We also want to provide the people the ability to interact with the Safecoin blockchain easily, without having to run a full node.</span>
+              <span className="faq4b">A: MySafecoin Wallet was inspired by</span> <a href="https://my.zel.cash/"><span className="faq4c">MyZelWallet's</span></a> <span className="faq4d">which was inspired by</span> <a href="https://myzenwallet.io/"><span className="faq4e">MyZenWallet's</span></a> <span className="faqst">and a special thanks to</span> <a href="https://github.com/TheTrunk">TheTrunk</a>.<span className="faq4f">We also want to provide the people the ability to interact with the Safecoin blockchain easily, without having to run a full node.</span>
             </p>
           </Col>
         </Row>
